@@ -30,12 +30,14 @@ import static java.security.AccessController.getContext;
  * Created by Sachin Govind on 21-Mar-17.
  */
 
-public class Launcher extends Activity{
+public class Launcher extends Activity {
+    public String sendFileURI;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
-    public static final String SEND_FILE="com.example.owner.bi";
+    public String SEND_FILE = "com.example.owner.bi";
     String mCurrentPhotoPath;
-    Uri sendURI=null;
+static Uri sendURI = null;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,28 +45,43 @@ public class Launcher extends Activity{
         setContentView(R.layout.launcheri);
 
         Button clickButton = (Button) findViewById(R.id.launchButton);
-        clickButton.setOnClickListener( new View.OnClickListener() {
+        clickButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-             dispatchTakePictureIntent();
+
+
+                dispatchTakePictureIntent();
 
             }
         });
+
+
+
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Intent intent = new Intent(this, WiFiDirectActivity.class);
-        String sendFileURI;
-        if(sendURI==null){
-            sendURI=Uri.EMPTY;
-        }
-        sendFileURI=sendURI.toString();
-        intent.putExtra(SEND_FILE,sendFileURI);
-        startActivity(intent);
+//
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(sendURI!=null) {
+            if (sendURI == null) {
+                sendURI = Uri.EMPTY;
+            }
+            sendFileURI = sendURI.toString();
+            Intent intent = new Intent(Launcher.this, WiFiDirectActivity.class);
+            intent.putExtra(SEND_FILE, sendFileURI);
+            startActivity(intent);
+        }
+    }
+
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -82,12 +99,7 @@ public class Launcher extends Activity{
         return image;
     }
 
-   /* private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }*/
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -102,12 +114,13 @@ public class Launcher extends Activity{
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,"com.example.owner.bi",photoFile);
-                sendURI=photoURI;
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.owner.bi", photoFile);
+                sendURI = photoURI;
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
+
     }
 }
 

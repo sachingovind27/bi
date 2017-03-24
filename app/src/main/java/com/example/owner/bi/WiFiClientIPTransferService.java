@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 public class WiFiClientIPTransferService extends IntentService{
 
@@ -50,7 +51,7 @@ Handler mHandler;
                 socket.connect((new InetSocketAddress(host, port)), FileTransferService.SOCKET_TIMEOUT);
                 Log.d(WiFiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
-                ContentResolver cr = context.getContentResolver();
+                ContentResolver cr = this.getContentResolver();
                 InputStream is = null;
                 
                /*

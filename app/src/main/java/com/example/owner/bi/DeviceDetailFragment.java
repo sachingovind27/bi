@@ -47,6 +47,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.owner.bi.DeviceListFragment.DeviceActionListener;
 
+import static com.example.owner.bi.WiFiDirectActivity.TAG;
+
 //import com.google.android.gms.ads.AdListener;
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
@@ -74,7 +76,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 	static long ActualFilelength = 0;
 	static int Percentage = 0;
 	public static String FolderName = "WiFiDirectDemo";
-	
+	Uri temp;
+    String selectedfilePath;
+
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -84,7 +88,6 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mContentView = inflater.inflate(R.layout.device_detail, null);
-        
        /* mInterstitialAd = new InterstitialAd(getActivity());
         mInterstitialAd.setAdUnitId("ca-app-pub-6910223592682604/2198005177");
 
@@ -97,7 +100,8 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         });*/
 
        // requestNewInterstitial();
-        
+
+
         mContentView.findViewById(R.id.btn_connect).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -161,10 +165,16 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     	         * get actual file name and size of file, it will be send to socket and recieved at other device.
     	         * File size help in displaying progress dialog actual progress.
     	         */
-    		 String selectedfilePath = null;
+
     		 try {
-    			 selectedfilePath = CommonMethods.getPath(uri,
-     					getActivity());
+				 if(WiFiDirectActivity.URI!=null)
+				 {
+					  temp=Uri.parse(WiFiDirectActivity.URI);
+					  selectedfilePath =WiFiDirectActivity.URI;
+
+				 }
+    			/* selectedfilePath = CommonMethods.getPath(temp,
+     					getActivity());*/
 
      			//Log.e("Original Selected File Path-> ", selectedfilePath);
 			} catch (Exception e) {
@@ -193,7 +203,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     			
     	        TextView statusText = (TextView) mContentView.findViewById(R.id.status_text);
     	        statusText.setText("Sending: " + uri);
-    	        Log.d(WiFiDirectActivity.TAG, "Intent----------- " + uri);
+    	        Log.d(TAG, "Intent----------- " + uri);
     	        Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
     	        serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
     	        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
@@ -553,7 +563,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
 				return f.getAbsolutePath();
 			} catch (IOException e) {
-                Log.e(WiFiDirectActivity.TAG, e.getMessage());
+                Log.e(TAG, e.getMessage());
                 return null;
             }
         }
@@ -642,7 +652,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
             out.close();
             inputStream.close();
         } catch (IOException e) {
-            Log.d(WiFiDirectActivity.TAG, e.toString());
+            Log.d(TAG, e.toString());
             return false;
         }
         return true;
@@ -690,7 +700,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 			out.close();
 			inputStream.close();
 		} catch (IOException e) {
-			Log.d(WiFiDirectActivity.TAG, e.toString());
+			Log.d(TAG, e.toString());
 			return false;
 		}
 		return true;

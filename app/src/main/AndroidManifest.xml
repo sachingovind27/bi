@@ -26,7 +26,7 @@
 
         <service android:enabled="true" android:name="com.example.owner.bi.FileTransferService" />
         <service android:enabled="true" android:name="com.example.owner.bi.WiFiClientIPTransferService" />
-
+        <activity android:name=".WiFiDirectActivity"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.owner.bi"

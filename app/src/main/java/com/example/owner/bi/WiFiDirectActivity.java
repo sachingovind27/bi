@@ -38,7 +38,6 @@ import android.view.View;
 import android.widget.Toast;
 import com.example.owner.bi.DeviceListFragment.DeviceActionListener;
 
-import static com.example.owner.bi.Launcher.SEND_FILE;
 
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.AdView;
@@ -57,11 +56,12 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
     private WifiP2pManager manager;
     private boolean isWifiP2pEnabled = false;
     private boolean retryChannel = false;
+    public static String URI;
 
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
-    Uri sendUri=null;
+
 
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
@@ -77,8 +77,7 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
         setContentView(R.layout.main);
 
         Intent intent=getIntent();
-        String stringUri= intent.getStringExtra(Launcher.SEND_FILE);
-        sendUri=Uri.parse(stringUri);
+        URI=intent.getExtras().getString("com.example.owner.bi");
 
         
       /*  AdView mAdView = (AdView) findViewById(R.id.adView);
