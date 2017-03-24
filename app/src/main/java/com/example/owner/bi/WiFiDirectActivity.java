@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -36,6 +37,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.example.owner.bi.DeviceListFragment.DeviceActionListener;
+
+import static com.example.owner.bi.Launcher.SEND_FILE;
 
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.AdView;
@@ -58,6 +61,7 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
+    Uri sendUri=null;
 
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
@@ -71,6 +75,11 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+
+        Intent intent=getIntent();
+        String stringUri= intent.getStringExtra(Launcher.SEND_FILE);
+        sendUri=Uri.parse(stringUri);
+
         
       /*  AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -87,15 +96,7 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
         channel = manager.initialize(this, getMainLooper(), null);
     }
 
-    public void startService(View view)
-    {
-
-    }
-   public void stopService(View view)
-   {
-
-   }
-    /** register the BroadcastReceiver with the intent values to be matched */
+      /** register the BroadcastReceiver with the intent values to be matched */
     @Override
     public void onResume() {
         super.onResume();

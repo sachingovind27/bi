@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraService" />
+
         <service android:enabled="true" android:name="com.example.owner.bi.FileTransferService" />
         <service android:enabled="true" android:name="com.example.owner.bi.WiFiClientIPTransferService" />
 
@@ -34,7 +34,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths">
+            </meta-data>
         </provider>
     </application>
 

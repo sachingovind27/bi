@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.net.Uri.EMPTY;
 import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.example.owner.bi.WiFiDirectActivity.TAG;
 import static java.security.AccessController.getContext;
@@ -32,8 +33,9 @@ import static java.security.AccessController.getContext;
 public class Launcher extends Activity{
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
+    public static final String SEND_FILE="com.example.owner.bi";
     String mCurrentPhotoPath;
-
+    Uri sendURI=null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,14 +56,14 @@ public class Launcher extends Activity{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-       /* ImageView mImageView=(ImageView)findViewById(R.id.imageView);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mImageView.setImageBitmap(imageBitmap);
-        }*/
-        Log.d(TAG,"weliufouse");
+        Intent intent = new Intent(this, WiFiDirectActivity.class);
+        String sendFileURI;
+        if(sendURI==null){
+            sendURI=Uri.EMPTY;
+        }
+        sendFileURI=sendURI.toString();
+        intent.putExtra(SEND_FILE,sendFileURI);
+        startActivity(intent);
     }
 
     private File createImageFile() throws IOException {
@@ -101,7 +103,7 @@ public class Launcher extends Activity{
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,"com.example.owner.bi",photoFile);
-                Log.v(TAG,"hello");
+                sendURI=photoURI;
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
