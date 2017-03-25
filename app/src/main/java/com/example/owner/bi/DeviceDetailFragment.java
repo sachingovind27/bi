@@ -206,7 +206,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     	        Log.d(TAG, "Intent----------- " + uri);
     	        Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
     	        serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
-    	        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
+    	        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, WiFiDirectActivity.URI);
     	        /*
     	         * Choose on which device file has to send weather its server or client
     	         */
@@ -248,7 +248,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     							"in else condition",
     							"Sending data to " + OwnerIp);
     					
-    					FileTransferService.PORT = 8888;
+    					FileTransferService.PORT = 8889;
     					
     					host=OwnerIp;
     					sub_port=FileTransferService.PORT;
