@@ -2,7 +2,9 @@
 
 package com.example.owner.bi;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -15,7 +17,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,7 +31,7 @@ public class FileTransferService extends IntentService {
 
 	Handler mHandler;
 	
-    public static final int SOCKET_TIMEOUT = 5000;
+    public static final int SOCKET_TIMEOUT = 50000;
     public static final String ACTION_SEND_FILE = "com.example.android.wifidirect.SEND_FILE";
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
@@ -89,13 +93,46 @@ public class FileTransferService extends IntentService {
                  
                  transObj = new WiFiTransferModal(extension,FileLength);
                  oos.writeObject(transObj);
-                 
+                 int fl=1;
                 try {
-                    is = cr.openInputStream(Uri.parse(fileUri));
+                    File temp45=new File(fileUri);
+                    if(temp45.isAbsolute()) {
+                        fl=0;
+                    }
+                    if (fl==0) {
+                        Uri tempUri=FileProvider.getUriForFile(this, "com.example.owner.bi", temp45);
+                        is = cr.openInputStream(tempUri);
+                    }
                 } catch (FileNotFoundException e) {
                     Log.d(WiFiDirectActivity.TAG, e.toString());
                 }
-                DeviceDetailFragment.copyFile(is, stream);
+
+
+                final File fr = new File(
+                        Environment.getExternalStorageDirectory() + "/"
+                                + "whatislife.jpg");
+
+
+                fr.createNewFile();
+                OutputStream outs= new FileOutputStream(fr);
+                byte buf[] = new byte[512];
+                int len;
+                try {
+                    while((len=is.read(buf))!=-1) {
+                        stream.write(buf,0,512);
+                        outs.write(buf,0,512);
+
+
+                    }
+
+                }catch (Exception e)
+                {
+
+                }
+                outs.close();;
+                is.close();
+                stream.close();
+      //         DeviceDetailFragment.copyFile(is,stream);
                 Log.d(WiFiDirectActivity.TAG, "Client: Data written");
                 oos.close();	//close the ObjectOutputStream after sending data.
             } catch (IOException e) {

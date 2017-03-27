@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -40,6 +41,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,18 +90,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mContentView = inflater.inflate(R.layout.device_detail, null);
-       /* mInterstitialAd = new InterstitialAd(getActivity());
-        mInterstitialAd.setAdUnitId("ca-app-pub-6910223592682604/2198005177");
 
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                requestNewInterstitial();
-//                beginPlayingGame();
-            }
-        });*/
-
-       // requestNewInterstitial();
 
 
         mContentView.findViewById(R.id.btn_connect).setOnClickListener(new View.OnClickListener() {
@@ -169,14 +160,16 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     		 try {
 				 if(WiFiDirectActivity.URI!=null)
 				 {
-					  temp=Uri.parse(WiFiDirectActivity.URI);
+
+					//  temp=Uri.parse(WiFiDirectActivity.URI);
 					  selectedfilePath =WiFiDirectActivity.URI;
 
 				 }
-    			/* selectedfilePath = CommonMethods.getPath(temp,
-     					getActivity());*/
-
+    			 /*selectedfilePath = CommonMethods.getPath(temp,
+     					getActivity());
+*/
      			//Log.e("Original Selected File Path-> ", selectedfilePath);
+				 Log.d(TAG,"weofih");
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
@@ -187,6 +180,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         			System.out.println("file name is   ::" + f.getName());
         			Long FileLength = f.length();
         			ActualFilelength = FileLength;
+
         			try {
         				Extension = f.getName();
         				Log.e("Name of File-> ", "" + Extension);
@@ -516,7 +510,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
 					public void run() {
 						// TODO Auto-generated method stub
-						mProgressDialog.setMessage("Receiving...");
+						/*mProgressDialog.setMessage("Receiving...");
 						mProgressDialog.setIndeterminate(false);
 						mProgressDialog.setMax(100);
 						mProgressDialog.setProgress(0);
@@ -524,22 +518,29 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 //						mProgressDialog.setCancelable(false);
 						mProgressDialog
 								.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						mProgressDialog.show();
+						mProgressDialog.show();*/
 					}
 				};
 				handler.post(r);
-				//Log.e("FileName got from socket on other side->>> ",
-						//obj.getFileName());
+				Log.e("FileName: ",obj.getFileName());
+				Log.d("filelength",""+obj.getFileLength());
 
-				final File f = new File(
+				final File fr = new File(
 						Environment.getExternalStorageDirectory() + "/"
 								+ FolderName + "/"
 								+ obj.getFileName());
 
-				File dirs = new File(f.getParent());
+				File dirs = new File(fr.getParent());
 				if (!dirs.exists())
 					dirs.mkdirs();
-				f.createNewFile();
+				fr.createNewFile();
+
+//				final File fr = new File(
+//						Environment.getExternalStorageDirectory() + "/"
+//								+ "whatislife.jpg");
+//
+//
+//				fr.createNewFile();
 				
 				/*
 				 * Recieve file length and copy after it
@@ -547,10 +548,23 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 				this.ReceivedFileLength = obj.getFileLength();
 				
 				InputStream inputstream = client.getInputStream();
-				
-				
-				copyRecievedFile(inputstream, new FileOutputStream(f),
-						ReceivedFileLength);
+				OutputStream outputStream= new FileOutputStream(fr);
+				byte buf[] = new byte[512];
+				int len=0;
+
+
+				try{
+					while((len=inputstream.read(buf))!=-1) {
+						outputStream.write(buf,0,len);
+					}
+				}catch (Exception e)
+				{
+					Log.d(TAG,"Write failed");
+				}
+
+				inputstream.close();
+				outputStream.close();
+	//			copyRecievedFile(inputstream,outputStream,ReceivedFileLength);
 				ois.close(); // close the ObjectOutputStream object after saving
 								// file to storage.
 				serverSocket.close();
@@ -559,9 +573,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 				 * Set file related data and decrypt file in postExecute.
 				 */
 				this.Extension = obj.getFileName();
-				this.EncryptedFile = f;
+				this.EncryptedFile = fr;
 
-				return f.getAbsolutePath();
+				return fr.getAbsolutePath();
 			} catch (IOException e) {
                 Log.e(TAG, e.getMessage());
                 return null;
@@ -576,10 +590,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         protected void onPostExecute(String result) {
             if (result != null) {
             	if(!result.equalsIgnoreCase("Demo")){
-            		/*if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                    }*/
-            		
+
             		Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse("file://" + result), "image/*");
@@ -625,30 +636,51 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 		long test = 0;
 		byte buf[] = new byte[FileTransferService.ByteSize];
 		int len;
+		int fl=0;
+		try {
+			if (inputStream.read(buf)==-1)
+			{
+				Log.d(TAG,"input stream is empty");
+			}
+		}
+		catch (Exception e)
+		{
+
+		}
         try {
+
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
-                try {
-					total += len;
-					if (ActualFilelength > 0) {
-						Percentage = (int) ((total * 100) / ActualFilelength);
-					}
-					// Log.e("Percentage--->>> ", Percentage+"   FileLength" +
-					// EncryptedFilelength+"    len" + len+"");
-					mProgressDialog.setProgress(Percentage);
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-					Percentage = 0;
-					ActualFilelength = 0;
-				}
+				total += len;
+				Percentage = (int) ((total * 100) / ActualFilelength);
+				mProgressDialog.setProgress(Percentage);
+//                try {
+//					total += len;
+//					if (ActualFilelength > 0) {
+//						Percentage = (int) ((total * 100) / ActualFilelength);
+//						if(Percentage>20&&fl==0)
+//						{
+//							Log.d(TAG,"jjyfj");
+//							fl=1;
+//						}
+//
+//					}
+//					// Log.e("Percentage--->>> ", Percentage+"   FileLength" +
+//					// EncryptedFilelength+"    len" + len+"");
+//					mProgressDialog.setProgress(Percentage);
+//				} catch (Exception e) {
+//					// TODO: handle exception
+//					e.printStackTrace();
+//					Percentage = 0;
+//					ActualFilelength = 0;
+//				}
             }
             if (mProgressDialog != null) {
 				if (mProgressDialog.isShowing()) {
 					mProgressDialog.dismiss();
 				}
 			}
-            
+
             out.close();
             inputStream.close();
         } catch (IOException e) {
@@ -661,7 +693,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     public static boolean copyRecievedFile(InputStream inputStream,
 			OutputStream out, Long length) {
 
-		byte buf[] = new byte[FileTransferService.ByteSize];
+		byte buf[] = new byte[512];
 		byte Decryptedbuf[] = new byte[FileTransferService.ByteSize];
 		String Decrypted;
 		int len;
@@ -670,35 +702,42 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 		try {
 			while ((len = inputStream.read(buf)) != -1) {
 				try {
-					out.write(buf, 0, len);
+
+					out.write(buf,0,len);
+					total+=len;
+					progresspercentage = (int) ((total * 100) / length);
+					mProgressDialog.setProgress(progresspercentage);
+
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				try {
-					total += len;
-					if (length > 0) {
-						progresspercentage = (int) ((total * 100) / length);
-					}
-					mProgressDialog.setProgress(progresspercentage);
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-					if (mProgressDialog != null) {
-						if (mProgressDialog.isShowing()) {
-							mProgressDialog.dismiss();
-						}
-					}
-				}
+//				try {
+//					total += len;
+//					if (length > 0) {
+//						progresspercentage = (int) ((total * 100) / length);
+//					}
+//					mProgressDialog.setProgress(progresspercentage);
+//				} catch (Exception e) {
+//					// TODO: handle exception
+//					e.printStackTrace();
+//					if (mProgressDialog != null) {
+//						if (mProgressDialog.isShowing()) {
+//							mProgressDialog.dismiss();
+//						}
+//					}
+//				}
 			}
+			out.close();
+			inputStream.close();
 			// dismiss progress after sending
+			Log.d(TAG,"aajefvg");
 			if (mProgressDialog != null) {
 				if (mProgressDialog.isShowing()) {
 					mProgressDialog.dismiss();
 				}
 			}
-			out.close();
-			inputStream.close();
+
 		} catch (IOException e) {
 			Log.d(TAG, e.toString());
 			return false;

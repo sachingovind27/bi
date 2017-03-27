@@ -35,7 +35,7 @@ public class Launcher extends Activity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     public String SEND_FILE = "com.example.owner.bi";
-    String mCurrentPhotoPath;
+    public String mCurrentPhotoPath;
 static Uri sendURI = null;
 
 
@@ -76,7 +76,7 @@ static Uri sendURI = null;
             }
             sendFileURI = sendURI.toString();
             Intent intent = new Intent(Launcher.this, WiFiDirectActivity.class);
-            intent.putExtra(SEND_FILE, sendFileURI);
+            intent.putExtra(SEND_FILE, mCurrentPhotoPath);
             startActivity(intent);
         }
     }

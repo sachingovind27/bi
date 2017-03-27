@@ -78,8 +78,8 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
         setContentView(R.layout.main);
 
         Intent intent=getIntent();
+      //  URI=intent.getExtras().getString("com.example.owner.bi");
         URI=intent.getExtras().getString("com.example.owner.bi");
-
         
       /*  AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
