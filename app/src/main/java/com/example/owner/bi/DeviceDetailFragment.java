@@ -80,6 +80,10 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     private WifiP2pDevice device;
     private WifiP2pInfo info;
     ProgressDialog progressDialog = null;
+	static {
+		System.loadLibrary("opencv_java3");
+
+	}
 
     private static ProgressDialog mProgressDialog;
 
@@ -146,9 +150,10 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
                     public void onClick(View v) {
                         // Allow user to pick an image from Gallery or other
                         // registered apps
-                        Intent intent = new Intent(Intent.ACTION_PICK);
-                        intent.setType("image/*");
-                        startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
+                      /*  Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image*//*");
+                        startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);*/
+						onActivityResult1();
                     }
                 });
 
@@ -157,13 +162,13 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
 
     
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    public void onActivityResult1() {
 
         // User has picked an image. Transfer it to group owner i.e peer using
         // FileTransferService.
-    	if(resultCode == getActivity().RESULT_OK){
-    		 Uri uri = data.getData();
+    	if(true){
+    		// Uri uri = data.getData();
     	        /*
     	         * get actual file name and size of file, it will be send to socket and recieved at other device.
     	         * File size help in displaying progress dialog actual progress.
@@ -204,12 +209,13 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     			else{
     				CommonMethods.e("", "path is null");
     				return;
+
     			}
     			
     			
     	        TextView statusText = (TextView) mContentView.findViewById(R.id.status_text);
-    	        statusText.setText("Sending: " + uri);
-    	        Log.d(TAG, "Intent----------- " + uri);
+    	        statusText.setText("Sending: " + WiFiDirectActivity.URI);
+    	        Log.d(TAG, "Intent----------- " + WiFiDirectActivity.URI);
     	        Intent serviceIntent = new Intent(getActivity(), FileTransferService.class);
     	        serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
     	        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, WiFiDirectActivity.URI);
@@ -281,7 +287,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
     				if(host !=null && sub_port!=-1)
     				{
     					CommonMethods.e("Going to intiate service", "service intent for initiating transfer");
-    					showprogress("Sending...");
+    					//showprogress("Sending...");
     					getActivity().startService(serviceIntent);
     				}
     				else {
@@ -652,14 +658,24 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 			Core.normalize(histSource, histSource, 0, 1, Core.NORM_MINMAX, -1, new Mat());
 
 			double resp1 = Imgproc.compareHist(histRef, histSource, 0);
-			if(resp1>=80) {
+			double resp4 = Imgproc.compareHist(histRef, histSource, 3);
+
+
+
+			if(resp1>0.7) {
+
+				File fr = new File(Source);
+				if(!Source.equals(Reference)){
+					fr.delete();
+				}
+				Log.d(TAG,"  resp1:  "+(long)resp1 );
+
 
 			}
 
 
 			double resp2 = Imgproc.compareHist(histRef, histSource, 1);
 			double resp3 = Imgproc.compareHist(histRef, histSource, 2);
-			double resp4 = Imgproc.compareHist(histRef, histSource, 3);
 
 			Log.d(TAG,"  resp1:  "+(long)resp1 );
 		}

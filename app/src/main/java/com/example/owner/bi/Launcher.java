@@ -68,7 +68,14 @@ static Uri sendURI = null;
             }
         });
 
-
+        Button button1=(Button) findViewById(R.id.receiverActivity);
+        button1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent1 = new Intent(Launcher.this,WiFiDirectActivity.class);
+                Launcher.this.startActivity(intent1);
+            }
+        });
     }
 
 
