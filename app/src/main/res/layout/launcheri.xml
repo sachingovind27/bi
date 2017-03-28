@@ -19,4 +19,12 @@
         android:id="@+id/launchButton"
         android:layout_marginLeft="110dp"
         android:layout_marginTop="30dp" />
+    <Button
+        android:text="View Images"
+        android:layout_width="152dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/launchButton1"
+        android:layout_marginLeft="110dp"
+        android:layout_marginTop="30dp" />
+
 </LinearLayout>

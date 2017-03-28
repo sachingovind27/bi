@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
     <application
@@ -23,6 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".DuplicateRemover"/>
+        <activity android:name=".Gall"/>
 
         <service android:enabled="true" android:name="com.example.owner.bi.FileTransferService" />
         <service android:enabled="true" android:name="com.example.owner.bi.WiFiClientIPTransferService" />

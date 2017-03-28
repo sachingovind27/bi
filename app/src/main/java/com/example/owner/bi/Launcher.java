@@ -56,7 +56,17 @@ static Uri sendURI = null;
 
             }
         });
+        Button clickButton1 = (Button) findViewById(R.id.launchButton1);
+        clickButton1.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+
+
+                Intent intent =new Intent(Launcher.this,Gall.class) ;
+                Launcher.this.startActivity(intent);
+            }
+        });
 
 
     }

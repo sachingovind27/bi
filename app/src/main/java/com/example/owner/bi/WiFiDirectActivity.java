@@ -76,7 +76,6 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-
         Intent intent=getIntent();
       //  URI=intent.getExtras().getString("com.example.owner.bi");
         URI=intent.getExtras().getString("com.example.owner.bi");
