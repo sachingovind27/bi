@@ -36,6 +36,7 @@ public class Launcher extends Activity {
     static final int REQUEST_TAKE_PHOTO = 1;
     public String SEND_FILE = "com.example.owner.bi";
     public String mCurrentPhotoPath;
+    public static int findImage=1;
 static Uri sendURI = null;
 
 
@@ -72,8 +73,12 @@ static Uri sendURI = null;
         button1.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent1 = new Intent(Launcher.this,WiFiDirectActivity.class);
-                Launcher.this.startActivity(intent1);
+               findImage*=-1;
+                if(findImage==-1) {
+                    Toast.makeText(v.getContext(), "Image filtering on", Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(v.getContext(), "Image filtering turned off", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

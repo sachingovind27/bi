@@ -16,6 +16,20 @@
 
 package com.example.owner.bi;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
+import android.media.FaceDetector;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.widget.LinearLayout.LayoutParams;
+
+
+
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,6 +110,14 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 	public static String FolderName = "WiFiDirectDemo";
 	Uri temp;
     String selectedfilePath;
+
+
+	//Face Detection
+
+	private static Bitmap mFaceBitmap;
+	private static int mFaceWidth = 200;
+	private static int mFaceHeight = 200;
+	private static final int MAX_FACES = 10;
 
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -594,7 +616,9 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 					sift(Environment.getExternalStorageDirectory() + "/" + FolderName + "/" + obj.getFileName(),Environment.getExternalStorageDirectory() + "/" + FolderName + "/" + listoffiles[i].getName() );
 					i++;
 				}
-
+				if(WiFiDirectActivity.findImage1==-1) {
+					facedetect(Environment.getExternalStorageDirectory() + "/" + FolderName + "/" + obj.getFileName());
+				}
 				/*
 				 * Set file related data and decrypt file in postExecute.
 				 */
@@ -608,6 +632,66 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
             }
 
         }
+
+		public void facedetect(String Source) {
+
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			Bitmap b = BitmapFactory.decodeFile(Source,options);
+			mFaceBitmap = b.copy(Bitmap.Config.RGB_565, true);
+			b.recycle();
+
+			mFaceWidth = mFaceBitmap.getWidth();
+			mFaceHeight = mFaceBitmap.getHeight();
+
+
+			// perform face detection in setFace() in a background thread
+			//setFace();
+			doLengthyCalc(Source);
+
+
+		}
+
+		public void setFace(String Source) {
+			FaceDetector fd;
+			FaceDetector.Face[] faces = new FaceDetector.Face[MAX_FACES];
+			PointF eyescenter = new PointF();
+			float eyesdist = 0.0f;
+			int[] fpx = null;
+			int[] fpy = null;
+			int count = 0;
+
+			try {
+				fd = new FaceDetector(mFaceWidth, mFaceHeight, MAX_FACES);
+				count = fd.findFaces(mFaceBitmap, faces);
+				Log.d(TAG,"count is: "+ count);
+
+				if(count>0&&(WiFiDirectActivity.findImage1==-1)){
+
+					File fr = new File(Source);
+					fr.delete();
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "setFace(): " + e.toString());
+				return;
+			}
+		}
+
+		private void doLengthyCalc(final String Source) {
+			Thread t = new Thread() {
+
+
+				public void run() {
+					try {
+						setFace(Source);
+
+					} catch (Exception e) {
+						Log.e(TAG, "doLengthyCalc(): " + e.toString());
+					}
+				}
+			};
+			t.start();
+		}
 
 		public void sift(String Reference,String Source) {
 			String mBaseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();

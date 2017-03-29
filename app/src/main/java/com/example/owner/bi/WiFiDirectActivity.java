@@ -58,7 +58,7 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
     private boolean isWifiP2pEnabled = false;
     private boolean retryChannel = false;
     public static String URI;
-
+    public static int findImage1=0;
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
@@ -90,7 +90,7 @@ public class WiFiDirectActivity extends Activity implements ChannelListener, Dev
 //        mAdView.setAdSize(AdSize.SMART_BANNER);
         mAdView.loadAd(adRequest);*/
         // add necessary intent values to be matched.
-
+        findImage1=Launcher.findImage;
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
